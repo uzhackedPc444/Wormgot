@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MAQSADBEK Terminal Chat</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--g:#39ff14;--c:#00f5ff;--bg:#0a0a0a;--d:#050505}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--g);font-family:'Courier New',Consolas,monospace}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.15),rgba(0,0,0,.15) 1px,transparent 1px,transparent 2px);pointer-events:none;z-index:1000}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent,rgba(0,0,0,.35) 100%);pointer-events:none;z-index:999}
+@keyframes f{0%,100%{opacity:1}93%{opacity:.85}}
+@keyframes gl{0%,100%{text-shadow:0 0 4px var(--g),0 0 8px var(--g)}50%{text-shadow:0 0 8px var(--g),0 0 16px var(--g),0 0 24px var(--g)}}
+@keyframes bl{0%,50%{opacity:1}51%,100%{opacity:0}}
+@keyframes sc{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+.scn{position:fixed;width:100%;height:80px;background:linear-gradient(transparent,rgba(57,255,20,.04),transparent);animation:sc 6s linear infinite;pointer-events:none;z-index:1001}
+.ctn{height:100vh;display:flex;flex-direction:column;animation:f 4s infinite}
+.hd{text-align:center;padding:8px 0;border-bottom:1px solid var(--g);position:relative}
+.asc{font-size:clamp(4px,1.2vw,9px);line-height:1;white-space:pre;color:var(--g);animation:gl 2s ease-in-out infinite}
+.ri{position:absolute;top:8px;right:12px;font-size:10px;color:var(--c)}.ri span{color:var(--g)}
+.sb{display:flex;justify-content:space-between;padding:4px 8px;font-size:9px;border-bottom:1px solid #1a3a1a;background:rgba(0,0,0,.3)}
+.sb .on{color:var(--c)}
+.ch{flex:1;overflow-y:auto;padding:8px;min-height:0}
+.ch::-webkit-scrollbar{width:5px}.ch::-webkit-scrollbar-track{background:var(--d)}.ch::-webkit-scrollbar-thumb{background:var(--g)}
+.m{margin:2px 0;word-wrap:break-word;font-size:11px;line-height:1.25}
+.m .t{color:#0a0;font-size:9px}.m .u{color:var(--c)}.m .x{color:var(--g)}
+.m.s{color:#555;font-style:italic}.m.e{color:#f33}.m.cm{color:var(--c)}
+.ty{color:#444;font-size:9px;padding:2px 8px;min-height:14px}
+.ip{border-top:1px solid var(--g);padding:6px 8px;display:flex;align-items:center;background:var(--d)}
+.pr{color:var(--c);margin-right:6px;font-size:12px}
+.ip input{flex:1;background:0;border:0;color:var(--g);font:inherit;font-size:12px;outline:0;caret-color:var(--g)}
+.cr{width:6px;height:12px;background:var(--g);animation:bl 1s step-end infinite}
+.ld{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px}
+.ld.h{display:none}
+.ld h2{color:var(--g);margin-bottom:20px;text-transform:uppercase;letter-spacing:2px;animation:gl 2s ease-in-out infinite;font-size:14px}
+.bx{border:1px solid var(--g);padding:20px;max-width:350px;width:100%;text-align:center}
+.bx input{width:100%;padding:8px;background:0;border:1px solid var(--g);color:var(--g);font:inherit;font-size:12px;margin:6px 0;text-align:center;text-transform:uppercase;letter-spacing:1px;outline:0}
+.bx input::placeholder{color:#1a4a1a}.bx input:focus{box-shadow:0 0 6px var(--g)}
+.bx button{width:100%;padding:8px;background:0;border:1px solid var(--g);color:var(--g);font:inherit;font-size:11px;cursor:pointer;margin:3px 0;text-transform:uppercase;letter-spacing:1px;transition:.2s}
+.bx button:hover{background:var(--g);color:var(--bg);box-shadow:0 0 12px var(--g)}
+.bx .or{color:#333;margin:10px 0;font-size:10px}
+.bx .er{color:#f33;margin-top:6px;font-size:10px;min-height:16px}
+.cs{position:fixed;bottom:6px;left:6px;font-size:8px;z-index:1002}
+.cs.ok{color:var(--g)}.cs.no{color:#f33}.cs.wt{color:#fa0}
+.hp{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--d);border:1px solid var(--g);padding:15px;z-index:1003;max-width:400px;width:90%}
+.hp.sh{display:block}.hp h3{color:var(--c);margin-bottom:10px;border-bottom:1px solid var(--g);padding-bottom:6px;font-size:12px}
+.hp .cl{font-size:10px;line-height:1.6}.hp .cl span{color:var(--c)}
+.hp .x{position:absolute;top:6px;right:10px;cursor:pointer;color:var(--g);font-size:12px}
+.ld .asc{font-size:clamp(5px,1.4vw,10px)}
+</style>
+</head>
+<body>
+<div class="scn"></div>
+<div class="ld" id="ld">
+<pre class="asc">
+███╗   ███╗ █████╗  ██████╗ ███████╗ █████╗ ██████╗ ██████╗ ███████╗██╗  ██╗
+████╗ ████║██╔══██╗██╔═══██╗██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██║ ██╔╝
+██╔████╔██║███████║██║   ██║███████╗███████║██║  ██║██████╔╝█████╗  █████╔╝ 
+██║╚██╔╝██║██╔══██║██║▄▄ ██║╚════██║██╔══██║██║  ██║██╔══██╗██╔══╝  ██╔═██╗ 
+██║ ╚═╝ ██║██║  ██║╚██████╔╝███████║██║  ██║██████╔╝██████╔╝███████╗██║  ██╗
+╚═╝     ╚═╝╚═╝  ╚═╝ ╚══▀▀═╝ ╚══════╝╚═╝  ╚═╝╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝
+</pre>
+<h2>[ TERMINAL CHAT ]</h2>
+<div class="bx">
+<input type="text" id="un" placeholder="ENTER USERNAME" maxlength="16">
+<button id="crbtn">[ CREATE ROOM ]</button>
+<div class="or">─── OR ───</div>
+<input type="text" id="rc" placeholder="ROOM CODE" maxlength="5">
+<button id="jnbtn">[ JOIN ROOM ]</button>
+<div class="er" id="le"></div>
+</div>
+</div>
+<div class="ctn" id="mn" style="display:none">
+<div class="hd">
+<pre class="asc">
+███╗   ███╗ █████╗  ██████╗ ███████╗ █████╗ ██████╗ ██████╗ ███████╗██╗  ██╗
+████╗ ████║██╔══██╗██╔═══██╗██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██║ ██╔╝
+██╔████╔██║███████║██║   ██║███████╗███████║██║  ██║██████╔╝█████╗  █████╔╝ 
+██║╚██╔╝██║██╔══██║██║▄▄ ██║╚════██║██╔══██║██║  ██║██╔══██╗██╔══╝  ██╔═██╗ 
+██║ ╚═╝ ██║██║  ██║╚██████╔╝███████║██║  ██║██████╔╝██████╔╝███████╗██║  ██╗
+╚═╝     ╚═╝╚═╝  ╚═╝ ╚══▀▀═╝ ╚══════╝╚═╝  ╚═╝╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝
+</pre>
+<div class="ri">ROOM: <span id="rm">-----</span> | USERS: <span id="uc">0</span></div>
+</div>
+<div class="sb"><span>MAQSADBEK TERMINAL v2.0</span><span class="on">STATUS: <span id="st">INIT</span></span></div>
+<div class="ch" id="ch"></div>
+<div class="ty" id="ty"></div>
+<div class="ip"><span class="pr">$&gt;</span><input type="text" id="mi" placeholder="/help for commands" maxlength="500" autocomplete="off"><span class="cr"></span></div>
+</div>
+<div class="hp" id="hp"><span class="x" onclick="tH()">[X]</span><h3>COMMANDS</h3><div class="cl"><span>/help</span> - Help<br><span>/clear</span> - Clear<br><span>/leave</span> - Leave<br><span>/users</span> - Users<br><span>/room</span> - Room code<br><span>/whoami</span> - Username</div></div>
+<div class="cs no" id="cs">● OFFLINE</div>
+<script>
+const API='/api/chat';
+const S={u:'',r:'',id:'',us:[],pi:null,ts:0};
+const $=i=>document.getElementById(i);
+const esc=t=>{const d=document.createElement('div');d.textContent=t;return d.innerHTML};
+const gC=()=>{const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i=0;i<5;i++)r+=c[~~(Math.random()*c.length)];return r};
+const gI=()=>Math.random().toString(36).substr(2,9);
+
+function sS(s,c){$('cs').textContent='● '+s;$('cs').className='cs '+c;$('st').textContent=s}
+function tH(){$('hp').classList.toggle('sh')}
+function beep(){try{const c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;o.type='square';g.gain.value=.08;o.start();o.stop(c.currentTime+.06)}catch(e){}}
+
+function aM(y,x,u='',t=''){
+const m=document.createElement('div');m.className='m '+y;
+const now=new Date().toTimeString().slice(0,8);
+if(y==='c')m.innerHTML=`<span class="t">[${t||now}]</span> <span class="u">[${esc(u)}]</span> &gt; <span class="x">${esc(x)}</span>`;
+else if(y==='s')m.innerHTML=`<span class="t">[${now}]</span> [SYS] ${esc(x)}`;
+else if(y==='e')m.innerHTML=`<span class="t">[${now}]</span> [ERR] ${esc(x)}`;
+else if(y==='cm')m.innerHTML=`<span class="t">[${now}]</span> ${x}`;
+$('ch').appendChild(m);$('ch').scrollTop=$('ch').scrollHeight;
+}
+
+async function api(action,method='GET',body=null){
+const p=new URLSearchParams({action,room:S.r,uid:S.id,user:S.u});
+if(S.ts&&action==='poll')p.set('since',S.ts);
+const opts={method,headers:{}};
+if(body){opts.headers['Content-Type']='application/json';opts.body=JSON.stringify(body)}
+try{const r=await fetch(`${API}?${p}`,opts);return await r.json()}
+catch(e){return{ok:false,error:'Network error'}}
+}
+
+async function poll(){
+if(!S.r)return;
+const d=await api('poll');
+if(!d.ok){if(d.error==='Room not found'){aM('e','Room closed');leave()}return}
+d.messages?.forEach(m=>{
+if(m.type==='chat'){aM('c',m.msg,m.user,m.time);if(m.user!==S.u)beep()}
+else if(m.type==='system')aM('s',m.msg);
+});
+if(d.ts)S.ts=d.ts;
+if(d.users){S.us=d.users;$('uc').textContent=d.users.length}
+$('ty').textContent=d.typing?.length?d.typing.join(', ')+' typing...':'';
+}
+
+async function join(r,u,create=false){
+S.r=r;S.u=u;S.id=gI();S.ts=Date.now();
+sS('CONNECTING','wt');
+if(create){
+const res=await api('create','POST');
+if(!res.ok){$('le').textContent=res.error||'Failed';sS('ERROR','no');S.r='';return}
+}
+const res=await api('join','POST');
+if(!res.ok){$('le').textContent=res.error||'Failed to join';sS('ERROR','no');S.r='';return}
+sS('CONNECTED','ok');$('rm').textContent=r;$('ld').classList.add('h');$('mn').style.display='flex';$('mi').focus();
+aM('s',`Connected to room ${r}`);
+S.pi=setInterval(poll,1000);poll();
+}
+
+async function send(msg){
+if(!msg.trim())return;
+await api('send','POST',{msg:msg.slice(0,500)});
+aM('c',msg,S.u);
+}
+
+async function typ(){await api('typing','POST')}
+
+async function leave(){
+if(S.r)await api('leave','POST');
+if(S.pi)clearInterval(S.pi);
+S.r='';S.us=[];S.ts=0;$('mn').style.display='none';$('ld').classList.remove('h');$('ch').innerHTML='';sS('OFFLINE','no');
+}
+
+function cmd(c){
+const x=c.slice(1).split(' ')[0].toLowerCase();
+switch(x){
+case'help':tH();break;
+case'clear':$('ch').innerHTML='';aM('cm','Cleared');break;
+case'leave':leave();break;
+case'users':aM('cm',`Users: ${S.us.join(', ')||S.u}`);break;
+case'room':aM('cm',`Room: ${S.r}`);break;
+case'whoami':aM('cm',`You: ${S.u}`);break;
+default:aM('e',`Unknown: ${x}`)}
+}
+
+let tyt=0;
+$('mi').onkeydown=e=>{
+if(e.key==='Enter'){const v=$('mi').value.trim();$('mi').value='';if(v.startsWith('/'))cmd(v);else if(v)send(v)}
+else if(Date.now()-tyt>2000){tyt=Date.now();typ()}
+};
+$('crbtn').onclick=async()=>{const u=$('un').value.trim();if(u.length<2){$('le').textContent='2+ chars needed';return}$('le').textContent='';join(gC(),u,true)};
+$('jnbtn').onclick=async()=>{const u=$('un').value.trim(),r=$('rc').value.trim().toUpperCase();if(u.length<2){$('le').textContent='2+ chars needed';return}if(r.length!==5){$('le').textContent='5-char code needed';return}$('le').textContent='';join(r,u)};
+$('un').onkeydown=e=>{if(e.key==='Enter')$('crbtn').click()};
+$('rc').onkeydown=e=>{if(e.key==='Enter')$('jnbtn').click()};
+$('rc').oninput=e=>e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+document.onkeydown=e=>{if(e.key==='Escape'&&$('hp').classList.contains('sh'))tH()};
+window.onbeforeunload=()=>{if(S.r)navigator.sendBeacon(`${API}?action=leave&room=${S.r}&uid=${S.id}&user=${S.u}`)};
+sS('READY','ok');
+</script>
+</body>
+</html>
